@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Robot</title>
+	<script>
+		// globals
+		var btnT4, btnT5, btnT6, rangeSpeed, btnLeft, btnMove, btnRight, btnEat, btnAhead, txtAhead, btnBlocked, txtBlocked, btnSniff, txtSniff, btnReset, btnRun, btnTurnToFood, btnGoTillBlocked, newWorld, newDisplay, stepCount, count
+	</script>
+	<script src="js/model.js"></script>
+	<script src="js/view.js"></script>
+
+<style>
+	body{
+		background-color: #f1f1f1;
+		font: normal 100% Calibri, Arial, sans-serif
+	}
+	canvas{
+		background-color: #fff;
+		margin : 0 2em
+	}
+	div{
+		display: inline-block
+	}
+	div input{
+		margin: 0.6em 1em;
+		padding: 0.2em 1em;
+	}
+	#run{
+		padding: 1em 2em;
+		font-weight: bold;
+		font-size: 1em;
+	}
+</style>
+</head>
+<body>
+	<canvas></canvas>
+	<div>
+		<input type = "button" id = "T4" value ="Task 4"/>
+		<input type = "button" id = "T5" value ="Task 5"/>
+		<input type = "button" id = "T6" value ="Task 6"/>
+		<br>
+		Faster <input type="range" id="speed" min="1" max="10" /> Slower
+		<br>
+		<input type = "button" id = "left" value ="Left"/>
+		<input type = "button" id = "move" value ="Move"/>
+		<input type = "button" id = "right" value ="Right"/>
+		<br>
+		<input type = "button" id = "eat" value ="Eat"/>
+		<br>
+		<input type = "button" id = "ahead" value ="What's ahead?"/>
+		<span id="showAhead">????????</span>
+		<br>
+		<input type = "button" id = "blocked" value ="Am I blocked?"/>
+		<span id="showBlocked">??????????</span>
+		<br>
+		<input type = "button" id = "sniff" value ="Sniff"/>
+		<span id="showSniff">??????????</span>
+		<input type = "button" id = "reset" value ="Reset" style="background-color: red"/>
+		<br>		
+		<input type = "button" id= "run" value ="Run your code from here"/>
+		<br>
+		<input type = "button" id = "turnToFood" value ="Turn To Food"/>
+		<span id="stepCount"></span>
+		<input type = "button" id = "goTillBlocked" value ="Go till blocked"/>		
+	</div>
+<script>
+const WORLD_SIZE = 20
+const SCALE = 18
+
+var reset = function(){
+	'use strict'	
+	/*
+	 * header comment 3 here
+	*/
+	count = 0
+	newWorld.initialize()
+	newDisplay.load()
+	btnT4.disabled = false
+	btnT5.disabled = false
+	btnT6.disabled = false
+	rangeSpeed.disabled = false
+	btnLeft.disabled = false
+	btnMove.disabled = false
+	btnRight.disabled = false
+	btnEat.disabled = false
+	btnAhead.disabled = false
+	btnBlocked.disabled = false
+	btnSniff.disabled = false
+	btnRun.disabled = false
+	btnTurnToFood.disabled = false
+	btnGoTillBlocked.disabled = false
+}
+	
+
+/*var closeButtons = function() {
+
+	btnT4.disabled = true
+	btnT5.disabled = true
+	btnT6.disabled = true
+	rangeSpeed.disabled = true
+	btnLeft.disabled = true
+	btnMove.disabled = true
+	btnRight.disabled = true
+	btnEat.disabled = true
+	btnAhead.disabled = true
+	btnBlocked.disabled = true
+	btnSniff.disabled = true
+	btnRun.disabled = true
+	btnTurnToFood.disabled = true
+	btnGoTillBlocked.disabled = true
+}*/
+
+var btnAheadClick = function(){
+/*
+ *header comment 11 here
+*/
+	var result
+	var someThing = newWorld.myRobot.look()
+	
+	if(someThing == null){
+		result = "Nothing"
+	} else if(someThing.type == "block"){
+		result = "Block"
+	} else if(someThing.type == "food"){
+		result = "Food"
+	} else{
+		result = "I'm really confused!"
+	}
+	txtAhead.innerHTML = result
+}
+
+var btnBlockedClick = function(){
+	'use strict'
+	txtBlocked.innerHTML = newWorld.myRobot.isBlocked()? "AM Blocked":"NOT Blocked"
+}
+
+var btnEatClick = function(){
+	newWorld.myRobot.eat()
+}
+
+var btnGoTillBlockedClick = function(){
+	newWorld.myRobot.goTillBlocked()
+}
+
+var btnLeftClick = function(){
+	newWorld.myRobot.turnLeft()
+}
+
+var btnRightClick = function(){
+	newWorld.myRobot.turnRight()
+}
+
+var btnMoveClick = function(){
+	newWorld.myRobot.move()
+}
+
+var btnRunClick = function(){
+	newWorld.myRobot.go()
+}
+
+var btnSniffClick = function(){
+	txtSniff.innerHTML = newWorld.myRobot.sniff()?"I smell FOOD!":"I smell NOTHING!"
+}
+
+var btnT4Click = function(){
+	newWorld.setTask4()
+	newWorld.paint(newDisplay)
+	btnT4.disabled = true
+	btnT5.disabled = true
+	btnT6.disabled = true
+}
+
+var btnT5Click = function(){
+	newWorld.setTask5()
+	newWorld.paint(newDisplay)
+	btnT4.disabled = true
+	btnT5.disabled = true
+	btnT6.disabled = true
+}
+
+var btnT6Click = function(){
+	newWorld.setTask6()
+	newWorld.paint(newDisplay)
+	btnT4.disabled = true
+	btnT5.disabled = true
+	btnT6.disabled = true
+}
+
+var btnTurnToFoodClick = function(){
+	newWorld.myRobot.turnToFood()
+}
+
+var rangeSpeedChange = function(){
+	newWorld.setWait(rangeSpeed.value)
+}
+
+window.onload = function(){
+	// set globals
+	btnT4 = document.getElementById("T4"),
+	btnT5 = document.getElementById("T5"),
+	btnT6 = document.getElementById("T6"),
+	rangeSpeed = document.getElementById("speed"),
+	btnLeft = document.getElementById("left"),
+	btnMove = document.getElementById("move"),
+	btnRight = document.getElementById("right"),
+	btnEat = document.getElementById("eat"),
+	btnAhead = document.getElementById("ahead"),
+	txtAhead = document.getElementById("showAhead"),
+	btnBlocked = document.getElementById("blocked"),
+	txtBlocked = document.getElementById("showBlocked"),
+	btnSniff = document.getElementById("sniff"),
+	txtSniff = document.getElementById("showSniff"),
+	btnReset = document.getElementById("reset"),
+	btnRun = document.getElementById("run"),
+	btnTurnToFood = document.getElementById("turnToFood"),
+	btnGoTillBlocked = document.getElementById("goTillBlocked")
+	stepCount = document.getElementById("stepCount")
+	// add event listeners
+	btnAhead.addEventListener('click', btnAheadClick, false)
+	btnBlocked.addEventListener('click', btnBlockedClick, false)
+	btnEat.addEventListener('click', btnEatClick, false)
+	btnGoTillBlocked.addEventListener('click', btnGoTillBlockedClick, false)
+	btnLeft.addEventListener('click', btnLeftClick, false)
+	btnRight.addEventListener('click', btnRightClick, false)
+	btnMove.addEventListener('click', btnMoveClick, false)
+	btnRun.addEventListener('click', btnRunClick, false)
+	btnSniff.addEventListener('click', btnSniffClick, false)
+	btnT4.addEventListener('click', btnT4Click, false)
+	btnT5.addEventListener('click', btnT5Click, false)
+	btnT6.addEventListener('click', btnT6Click, false)
+	btnTurnToFood.addEventListener('click', btnTurnToFoodClick, false)
+	rangeSpeed.addEventListener('change', rangeSpeedChange, false)
+	btnReset.addEventListener('click', reset, false)
+
+	newWorld = new World()
+	newDisplay = new CanvasDisplay(newWorld)
+			
+	reset()
+	
+}
+
+
+</script>
+</body>
+</html>
